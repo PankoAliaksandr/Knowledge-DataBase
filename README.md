@@ -1,2 +1,2 @@
-# Knowledge-DataBase
-Set of mindmaps (hard and soft skills)
+# Knowledge-DataBase-Hard-Skills
+Set of mindmaps (hard skills)
