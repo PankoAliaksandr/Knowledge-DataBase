@@ -1,0 +1,39 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Portfolio Variance Proof}
+\author{panko.aliaksandr }
+\date{October 2020}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+We all know that portfolio variance is $\sigma^2 = w\Sigma w$, but actually why?
+
+First of all, let us say that, in other words, the task is to prove that multivariate variance can be derived using this formula.
+
+\section{The Proof}
+By definition variance is:
+
+\begin{align*}
+   & \sigma^2 = E[(X - E(X))^2] = E[X^2 - 2X*E(X) + E^2(X)] = \\  & =  E(X^2) - 2E(X)*E(X) + E^2(X)] = E(X^2) - E^2(X)
+\end{align*}
+
+Now if X consists of several assets (let's proof for 2). For the proof initial definition $\sigma^2 = E[(X - E(X))^2] $ is required.
+$$ E(X) = w_1X_1 + w_2X_2$$
+$$\sigma^2_{portf} = E[(X_{portf} - E(X_{portf}))^2] = E[(w_1X_1 + w_2X_2 - w_1E(X_1) - w_2E(X_2))^2] =$$
+$$= E[(w_1(X_1 - E(X_1)) + w_2(X_2 - E(X_2)))^2] = $$
+$$= E[w_1^2(X_1 - E(X_1))^2 + w_2^2(X_2 - E(X_2))^2 + 2w_1(X_1 - E(X_1))w_2(X_2 - E(X_2))] = $$
+$$ =  w_1^2E[(X_1 - E(X_1))^2] + w_2^2E[(X_2 - E(X_2))^2] + 2w_1w_2E[(X_1 - E(X_1)(X_2 - E(X_2))] = $$
+$$ = [def] = w_1^2\sigma^2_{X_1} + w_2^2\sigma^2_{X_2} + 2w_1w_2\sigma_{X_1}\sigma_{X_2} $$
+
+It is fairly easy to notice that if there are more assets it will be
+$$ \sigma^2 = \sum_iw_i^2\sigma_{i}^2 + 2\sum_{ij}Cov_{ij}w_iw_j ; i \neq j$$
+Ok let's prove it also:
+$$ \sigma = E[\sum_iw_iX_i - \sum_iw_iE(X_i)]^2 = $$
+$$ = E[\sum_iw_i(X_i - E(X_i))]^2 = E[\sum_i[w_i(X_i - E(X_i))]^2 + 2\sum_{i\neq j}[w_i(X_i - E(X_i))w_j(X_j - E(X_j))]]=$$
+$$ = \sum_iw_i^2E[(X_i - E(X_i))^2] + 2 \sum_{i \neq j} w_iw_jE[(X_i - E(X_i))(X_j - E(X_j))]=[def] = $$
+$$ = [def] = \sum_iw_i^2\sigma_i^2 + 2\sum_{i\neq j}w_iw_j Cov_{ij}= w\Sigma w$$
+\end{document}
