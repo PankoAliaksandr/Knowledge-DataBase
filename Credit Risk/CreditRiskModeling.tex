@@ -1,0 +1,78 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+
+\title{Credit Risk}
+\author{panko.aliaksandr }
+\date{October 2020}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+Credit risk is a risk of a counter-party default.
+
+First read this great 
+\href{https://www.listendata.com/2019/08/credit-risk-modelling.html#Probability-of-Default-Modeling}{[article]}
+
+\section{Judgmental Method: 5 Cs of Credit}
+The “5 Cs of Credit” is a common phrase used to describe the five major factors used to determine a potential borrower’s creditworthiness.
+The 5 Cs of Credit refer to Character, Capacity, Collateral, Capital, and Conditions.
+
+\section{Core Definitions}
+\begin{enumerate}
+    \item PD - probability of default
+    \item EAD - exposure at default (the amuont of the remaining debt on the default date)
+    \item LGD - loss given default = 1-recovery rate
+    \item EL - expected loss. EL = PD * EAD * LGD
+    \item M - Effective Maturity 
+\end{enumerate}
+
+\section{Modeling}
+\begin{enumerate}
+    \item Define factors
+    \item Prepare data 
+    \item Split data into Train and Test
+    \item Create a model
+    \item Analyse a confusion matrix (matrix with true positives and negatives and false positives and negatives, basically type 1 and 2 errors)
+\end{enumerate}
+
+
+\section{Model Fit}
+\subsection{Part 1: Sample probability}
+\begin{itemize}
+    \item Let us define a random variable Y, which takes 2 values: default (1) and not default(0).
+    \item Since random variable takes only 2 values $Y \sim Bernoulli(p)$
+    \item Assume in the sample there are n observations. In this case we say that we have n different random variables $Y_1, Y_2,...,Y_n$.
+    \item Different since it is clear that based on factors values $X = (x_1,x_2...x_n)$ the parameter of Bernoulli distribution is different in each case, meaning that $p_1 = p_1(x_1,x_2...x_n), p_2 = p_2(x_1,x_2...x_n), etc.$
+    \item This means we have $$Y_1 \sim B(p_1), Y_2 \sim B(p_2), ... , Y_n \sim B(p_n) $$ or $Y \sim B_{joint}(p_1,p_2,..,p_n)$
+    \item $PDF_{Bernoulli} = p^k(1-p)^{1-k}, k\in(0,1)$
+    \item The probability of observing this sample is: $$P(sample) = \prod_i p_i^{k_i}(X,\Theta)(1-p_i^{1-k_i}(X,\Theta))$$
+    \item We know $X = (x_1,x_2...x_n)$ and $k_i$ for each run, but we do not know the dependency (formula) between $X = (x_1,x_2...x_n)$ and $p(X)$. If we construct such formula $p_i(X,\Theta)$, we can use MLE approach to find parameters $\Theta = (\beta_0, \beta_1,... \beta_m)$ 
+\end{itemize}
+
+
+
+\subsection{Transformation}
+So the task is to construct a model which could map factors $X = (x_1,x_2...x_n)$ and probability of default $p(X)$.
+
+\begin{itemize}
+    \item First step is to make an important assumption about the model type. Assuming that the factors influence probability of default in linear way, we can construct the formula using linear regression.
+    \item However, 'standard/normal' linear regression analysis required dependent variable to be unrestricted numerical $y \in [-Inf;Inf]$. In our case $p(x) \in [0;1]$. This means that we cannot use OLS directly, transformation is required.
+    \item Notice that $\frac{P}{1-P}$ belongs to [0; Inf]. 
+    \item $\ln(\frac{p}{1-p})$ belongs to $[-Inf; Inf]$. This term is called log-odds. 
+    \item Now we can operate with log-odds dependent variable as usually and fit a regression line: 
+    $$\ln(\frac{p}{1-p}) = \beta_0 + \beta_1 x_1 + ... + \beta_n x_n$$
+    \item Making the assumption that factors influence the log-odds in a linear way we can conclude that (applying exponent operation and finding p from the ratio):
+$p(x) = \frac{1}{1 + e^{b_0 + b_1x_1 + ...b_nx_n}} = \frac{1}{1 + e^{\sum_{i=0:n} \beta_i x_i}}$, having in mind $x_0 = 1$ in this view.
+    \item Now we are ready to combine 2 parts together:
+    $$P(sample) = \prod_i \frac{1}{1 + e^{\sum_{i} \beta_i x_i}}^{k_i}(1-\frac{1}{1 + e^{\sum_{i} \beta_i x_i}}^{1-k_i})$$
+    \item Now we have all $k_i$ (default(1) or not(0)),  all $x_i$ (factors values), and we can apply MLE approach and maximize log of this function to find parameters $\beta_i$. After that the model is fitted. Using the regression we can find the probability of default. Having the probability we can make a decision.
+\end{itemize}
+
+
+
+
+\end{document}
